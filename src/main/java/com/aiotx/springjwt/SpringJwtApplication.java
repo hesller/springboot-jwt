@@ -2,6 +2,7 @@ package com.aiotx.springjwt;
 
 import com.aiotx.springjwt.domain.Role;
 import com.aiotx.springjwt.domain.User;
+import com.aiotx.springjwt.security.ApplicationUserRole;
 import com.aiotx.springjwt.services.Service;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,16 +11,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.aiotx.springjwt.security.ApplicationUserRole.*;
+
 @SpringBootApplication
 public class SpringJwtApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringJwtApplication.class, args);
-    }
-
-    @Bean
-    BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -34,10 +32,10 @@ public class SpringJwtApplication {
             userService.saveUser(new User( "Will travolta", "will", "123456"));
             userService.saveUser(new User( "Mark travolta", "mark", "123456"));
 
-            userService.addRoleToUser("john", "ROLE_MANAGER");
-            userService.addRoleToUser("john", "ROLE_ADMIN");
-            userService.addRoleToUser("will", "ROLE_SUPER_ADMIN");
-            userService.addRoleToUser("mark", "ROLE_USER");
+            userService.addRoleToUser("john", ADMIN.getRole());
+            userService.addRoleToUser("john", ADMIN.getRole());
+            userService.addRoleToUser("will", SUPER_ADMIN.getRole());
+            userService.addRoleToUser("mark", USER.getRole());
         };
     }
 
