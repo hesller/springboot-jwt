@@ -1,5 +1,6 @@
 package com.aiotx.springjwt.security;
 
+import com.aiotx.springjwt.auth.ApplicationUserService;
 import com.aiotx.springjwt.filter.CustomAuthenticationFilter;
 import com.aiotx.springjwt.filter.CustomAuthorizationFilter;
 import com.aiotx.springjwt.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,52 +38,62 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration @EnableWebSecurity @RequiredArgsConstructor @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final ApplicationUserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-
-        UserDetails hadesh = User.builder()
-                .username("hadesh")
-                .password(passwordEncoder.encode("123456"))
-//                .roles(SUPER_ADMIN.getRole())
-                .authorities(SUPER_ADMIN.getGrantedAuthorities())
-                .build();
-
-        UserDetails marcosFelipe = User.builder()
-                .username("marcos")
-                .password(passwordEncoder.encode("123456"))
-//                .roles(ADMIN.getRole())
-                .authorities(ADMIN.getGrantedAuthorities())
-                .build();
-
-        UserDetails andre = User.builder()
-                .username("andre")
-                .password(passwordEncoder.encode("123456"))
-//                .roles(ADMIN.getRole())
-                .authorities(MANAGER.getGrantedAuthorities())
-                .build();
-
-        UserDetails pedrinho = User.builder()
-                .username("pedrinho")
-                .password(passwordEncoder.encode("123456"))
-//                .roles(USER.getRole())
-                .authorities(USER.getGrantedAuthorities())
-                .build();
-
-
-        return new InMemoryUserDetailsManager(
-                marcosFelipe,
-                pedrinho,
-                hadesh,
-                andre
-        );
-    }
+//    @Override
+//    @Bean
+//    protected UserDetailsService userDetailsService() {
+//
+//        UserDetails hadesh = User.builder()
+//                .username("hadesh")
+//                .password(passwordEncoder.encode("123456"))
+////                .roles(SUPER_ADMIN.getRole())
+//                .authorities(SUPER_ADMIN.getGrantedAuthorities())
+//                .build();
+//
+//        UserDetails marcosFelipe = User.builder()
+//                .username("marcos")
+//                .password(passwordEncoder.encode("123456"))
+////                .roles(ADMIN.getRole())
+//                .authorities(ADMIN.getGrantedAuthorities())
+//                .build();
+//
+//        UserDetails andre = User.builder()
+//                .username("andre")
+//                .password(passwordEncoder.encode("123456"))
+////                .roles(ADMIN.getRole())
+//                .authorities(MANAGER.getGrantedAuthorities())
+//                .build();
+//
+//        UserDetails pedrinho = User.builder()
+//                .username("pedrinho")
+//                .password(passwordEncoder.encode("123456"))
+////                .roles(USER.getRole())
+//                .authorities(USER.getGrantedAuthorities())
+//                .build();
+//
+//
+//        return new InMemoryUserDetailsManager(
+//                marcosFelipe,
+//                pedrinho,
+//                hadesh,
+//                andre
+//        );
+//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder);
+//        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userService);
+        return provider;
     }
 
     @Override
