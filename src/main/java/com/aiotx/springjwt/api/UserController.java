@@ -6,6 +6,7 @@ import com.aiotx.springjwt.services.Service;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -19,6 +20,7 @@ public class UserController {
     private final Service userService;
 
     @GetMapping("/users")
+    @PreAuthorize("hasAnyAuthority('manager:read')")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
@@ -30,17 +32,20 @@ public class UserController {
     }
 
     @PostMapping("/role/save")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')") // can use here hasRole, hasAnyRole, hasAuthority, hasAnyAuthority
     public ResponseEntity<Role> saveRole(@RequestBody Role role) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
     @GetMapping("/roles")
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     public List<Role> getRoles() {
         return userService.getRoles();
     }
 
     @PostMapping("/role/addtouser")
+    @PreAuthorize("hasAnyAuthority('admin:write')")
     public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
         userService.addRoleToUser(form.getUsername(), form.getRolename());
         return ResponseEntity.ok().build();
