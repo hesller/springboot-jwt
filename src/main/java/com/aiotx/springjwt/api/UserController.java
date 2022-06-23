@@ -20,7 +20,7 @@ public class UserController {
     private final Service userService;
 
     @GetMapping("/users")
-    @PreAuthorize("hasAnyAuthority('manager:read')")
+    @PreAuthorize("hasAnyAuthority('user:read')")
     public ResponseEntity<List<User>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }

@@ -88,12 +88,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/users").hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), SUPER_ADMIN.getRole());
-        http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAuthority("ROLE_USER");
+//        http.authorizeRequests().antMatchers(GET, "/api/users").hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), SUPER_ADMIN.getRole());
         http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAuthority("ROLE_MANAGER");
         http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAuthority(MANAGER_WRITE.getPermission());
         http.authorizeRequests().antMatchers(POST, "/api/role/save/**").hasAuthority(SUPER_ADMIN_WRITE.getPermission());
-        http.authorizeRequests().antMatchers(GET, "/api/roles").hasAnyAuthority(ADMIN_READ.getPermission());
         http.authorizeRequests().anyRequest().authenticated(); /* this is here only for sake of example */
 
         http.addFilter(customAuthenticationFilter);
