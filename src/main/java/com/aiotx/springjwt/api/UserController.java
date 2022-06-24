@@ -50,8 +50,6 @@ public class UserController {
         userService.addRoleToUser(form.getUsername(), form.getRolename());
         return ResponseEntity.ok().build();
     }
-
-
 }
 
 @Data
